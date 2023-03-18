@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 public class UserController {
 
     private Map<Integer, User> users = new HashMap<>();
@@ -23,7 +23,7 @@ public class UserController {
         return new ArrayList<>(users.values());
     }
 
-    @PostMapping("/register")
+    @PostMapping()
     public User register(@RequestBody @Valid User user) {
         isSpaceInLogin(user);
         user.setId(++idGenerator);
@@ -32,7 +32,7 @@ public class UserController {
         return user;
     }
 
-    @PutMapping(value = "/update")
+    @PutMapping()
     public User updateFilm (@RequestBody @Valid User user) {
         if (users.containsKey(user.getId())) {
             isSpaceInLogin(user);

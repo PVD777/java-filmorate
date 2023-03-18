@@ -12,7 +12,7 @@ import java.util.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/films")
+@RequestMapping("/films")
 public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
@@ -23,7 +23,7 @@ public class FilmController {
         return new ArrayList<>(films.values());
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     public Film addFilm (@RequestBody @Valid Film film) {
         isUpToDateFilm(film);
         film.setId(++idCounter);
@@ -32,7 +32,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping("/update")
+    @PutMapping()
     public Film updateFilm (@RequestBody @Valid Film film) {
         if (films.containsKey(film.getId())) {
             isUpToDateFilm(film);
