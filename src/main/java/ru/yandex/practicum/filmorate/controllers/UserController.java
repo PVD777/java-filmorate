@@ -46,7 +46,7 @@ public class UserController {
     }
 
     public void isSpaceInLogin (User user) {
-        if (user.getName().contains(" ")) {
+        if (user.getLogin().contains(" ")) {
             log.warn("В логине присутствуют пробелы");
             throw new ValidationException("В логине присутствуют пробелы");
         }
