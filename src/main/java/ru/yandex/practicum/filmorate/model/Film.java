@@ -2,12 +2,8 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 
-
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
-
 import javax.validation.constraints.*;
 
 @Data
@@ -28,7 +24,7 @@ public class Film {
     public Film(String name, String description, String releaseDate, int duration) {
         this.name = name;
         this.description = description;
-        this.releaseDate = LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        this.releaseDate = LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.duration = duration;
     }
 }
