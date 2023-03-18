@@ -24,7 +24,7 @@ public class User {
     public User(String email, String login, String name, String birthday) {
         this.email = email;
         this.login = login;
-        if (name.isBlank()) this.name = login;
+        if ((name == null)||name.isBlank()) this.name = login;
         else this.name = name;
         this.birthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
