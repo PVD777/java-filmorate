@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PutMapping()
-    public User updateFilm (@RequestBody @Valid User user) {
+    public User updateUser (@RequestBody @Valid User user) {
         if (users.containsKey(user.getId())) {
             isSpaceInLogin(user);
             users.put(user.getId(), user);

@@ -40,9 +40,11 @@ public class FilmController {
             log.info("Выполнено обновление фильма {}", film.getName());
             return film;
         }
-        else
+        else {
             log.error("Попытка обновления фильма с несуществующим id {}", film.getId());
             throw new ValidationException("Фильм с таким id не существует");
+        }
+
     }
 
     public void isUpToDateFilm(Film film) {
