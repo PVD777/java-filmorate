@@ -15,6 +15,7 @@ import javax.validation.constraints.PastOrPresent;
 
 @Data
 public class User {
+
     private int id;
     @Email
     private String email;
