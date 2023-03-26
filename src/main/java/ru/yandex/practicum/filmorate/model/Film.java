@@ -7,6 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import javax.validation.constraints.*;
 
 @Data
@@ -24,12 +26,22 @@ public class Film {
     @NotNull (message = "Длительность фильма должна быть положительной")
     @Positive (message = "Длительность фильма должна быть положительной")
     private int duration;
+    private int likesCounter;
+    private Set<Integer> idOfLikers;
 
     public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
         this.description = description;
         this.releaseDate=releaseDate;
         this.duration = duration;
+        idOfLikers = new HashSet<>();
+    }
+
+    public void addIdOfLikers (int id) {
+        idOfLikers.add(id);
+    }
+    public void deleteIdOfLikers (int id) {
+        idOfLikers.remove(id);
     }
 
 }
