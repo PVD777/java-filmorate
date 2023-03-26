@@ -23,6 +23,7 @@ public class FilmService {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
+
     public Film putLikeToFilm(int id, int userId) {
         Film film = filmStorage.getFilm(id);
         if (film == null) {
@@ -56,6 +57,7 @@ public class FilmService {
         filmStorage.updateFilm(film);
         return film;
     }
+
     public List<Film> getPopularFilm(int count) {
         List <Film> sortedFilmList = filmStorage.getAllFilms()
                 .stream()

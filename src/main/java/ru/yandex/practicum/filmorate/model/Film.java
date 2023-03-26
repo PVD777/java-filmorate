@@ -35,15 +35,16 @@ public class Film {
     public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
         this.description = description;
-        this.releaseDate=releaseDate;
+        this.releaseDate = releaseDate;
         this.duration = duration;
         idOfLikers = new HashSet<>();
     }
 
-    public void addIdOfLikers (int id) {
+    public void addIdOfLikers(int id) {
         idOfLikers.add(id);
     }
-    public void deleteIdOfLikers (int id) {
+
+    public void deleteIdOfLikers(int id) {
         idOfLikers.remove(id);
     }
 

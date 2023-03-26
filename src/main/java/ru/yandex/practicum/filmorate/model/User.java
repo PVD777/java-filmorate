@@ -35,15 +35,18 @@ public class User {
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
-        if ((name == null)||name.isBlank()) this.name = login;
+        if ((name == null) || name.isBlank()) {
+            this.name = login;
+        }
         else this.name = name;
         this.birthday = birthday;
     }
 
-    public void addToFriendsId (Integer id) {
+    public void addToFriendsId(Integer id) {
         friedndsId.add(id);
     }
-    public void removeFromFriendsId (Integer id) {
+
+    public void removeFromFriendsId(Integer id) {
         friedndsId.remove(id);
     }
 }
