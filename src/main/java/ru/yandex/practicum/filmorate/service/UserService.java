@@ -3,11 +3,11 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,7 +19,7 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public void addFriend (int user1id, int user2id) {
+    public void addFriend(int user1id, int user2id) {
         User user1 = userStorage.getUser(user1id);
         User user2 = userStorage.getUser(user2id);
         user1.addToFriendsId(user2id);
@@ -29,20 +29,20 @@ public class UserService {
 
     }
 
-    public void deleteFriend (int user1id, int user2id) {
+    public void deleteFriend(int user1id, int user2id) {
         User user1 = userStorage.getUser(user1id);
         User user2 = userStorage.getUser(user2id);
         user1.removeFromFriendsId(user2id);
         user2.removeFromFriendsId(user1id);
         userStorage.updateUser(user1);
         userStorage.updateUser(user2);
-        }
+    }
 
-    public List<User> getCommonFriends (int user1id, int user2id) {
+    public List<User> getCommonFriends(int user1id, int user2id) {
         User user1 = userStorage.getUser(user1id);
         User user2 = userStorage.getUser(user2id);
-        List <User> commonFriends = new ArrayList<>();
-        List <Integer> commonID =  user1.getFriedndsId().stream()
+        List<User> commonFriends = new ArrayList<>();
+        List<Integer> commonID = user1.getFriedndsId().stream()
                 .filter(user2.getFriedndsId()::contains)
                 .distinct()
                 .collect(Collectors.toList());

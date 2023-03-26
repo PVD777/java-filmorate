@@ -54,7 +54,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    public void isSpaceInLogin (User user) {
+    public void isSpaceInLogin(User user) {
         if (user.getLogin().contains(" ")) {
             log.warn("В логине присутствуют пробелы");
             throw new ValidationException("В логине присутствуют пробелы");

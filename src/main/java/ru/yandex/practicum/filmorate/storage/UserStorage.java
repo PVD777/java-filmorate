@@ -13,6 +13,7 @@ public interface UserStorage {
 
     @GetMapping()
     public List<User> getAllUsers();
+
     @GetMapping()
     public User getUser(int id);
 
