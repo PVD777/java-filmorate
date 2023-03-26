@@ -17,6 +17,7 @@ import java.util.List;
 public class UserController {
     private final UserStorage userStorage;
     private final UserService userService;
+
     @Autowired
     public UserController(UserStorage userStorage, UserService userService) {
         this.userStorage = userStorage;
@@ -49,7 +50,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List <User> getCommenFriends(@PathVariable int id, @PathVariable int otherId) {
+    public List<User> getCommenFriends(@PathVariable int id, @PathVariable int otherId) {
         return userService.getCommonFriends(id, otherId);
     }
 
@@ -64,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public List <User> getFriendOfId(@PathVariable int id) {
+    public List<User> getFriendOfId(@PathVariable int id) {
         return userService.getFriendsOfId(id);
     }
 
