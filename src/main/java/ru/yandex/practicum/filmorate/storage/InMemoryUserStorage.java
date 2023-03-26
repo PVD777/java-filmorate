@@ -39,10 +39,11 @@ public class InMemoryUserStorage implements UserStorage {
             users.put(user.getId(), user);
             log.info("Выполнено обновление пользовтеля {}", user.getName());
             return user;
-        }
-        else
+        } else {
             log.error("Попытка обновления пользователя с несуществующим id {}", user.getId());
-        throw new ValidationException("Пользователь с таким id не существует");
+            throw new ValidationException("Пользователь с таким id не существует");
+        }
+
     }
 
     @Override

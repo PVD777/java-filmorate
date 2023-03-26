@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class InMemoryFilmStorage implements FilmStorage{
+public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Integer, Film> films = new HashMap<>();
     private int idCounter = 0;
@@ -42,8 +42,7 @@ public class InMemoryFilmStorage implements FilmStorage{
             films.put(film.getId(), film);
             log.info("Выполнено обновление фильма {}", film.getName());
             return film;
-        }
-        else {
+        } else {
             log.error("Попытка обновления фильма с несуществующим id {}", film.getId());
             throw new ValidationException("Фильм с таким id не существует");
         }

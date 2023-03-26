@@ -18,7 +18,7 @@ public interface UserStorage {
     public User getUser(int id);
 
     @PutMapping()
-    public User updateUser (@RequestBody @Valid User user);
+    public User updateUser(@RequestBody @Valid User user);
 
     @PostMapping()
     public User register(@RequestBody @Valid User user);
