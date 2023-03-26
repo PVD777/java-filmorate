@@ -52,9 +52,9 @@ public class UserService {
             return commonFriends;
     }
 
-    public List <User> getFriendsOfId(int id) {
+    public List<User> getFriendsOfId(int id) {
         User user = userStorage.getUser(id);
-        List <User> friendsOfId = new ArrayList<>();
+        List<User> friendsOfId = new ArrayList<>();
         if (user != null && !user.getFriedndsId().isEmpty()) {
             for (int friendId : user.getFriedndsId()) {
                 userStorage.getAllUsers().stream()

@@ -18,6 +18,7 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
@@ -34,7 +35,7 @@ public class FilmService {
             throw new UserNotFoundException("Пользователь не найден");
         }
         if (film.getIdOfLikers().isEmpty() || !film.getIdOfLikers().contains(userId)) {
-            film.setLikesCounter(film.getLikesCounter()+1);
+            film.setLikesCounter(film.getLikesCounter() + 1);
             film.addIdOfLikers(userId);
         }
         filmStorage.updateFilm(film);
@@ -51,7 +52,7 @@ public class FilmService {
             throw new UserNotFoundException("Пользователь не найден");
         }
         if (film.getIdOfLikers().contains(userId)) {
-            film.setLikesCounter(film.getLikesCounter()-1);
+            film.setLikesCounter(film.getLikesCounter() - 1);
             film.deleteIdOfLikers(userId);
         }
         filmStorage.updateFilm(film);
@@ -59,9 +60,9 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilm(int count) {
-        List <Film> sortedFilmList = filmStorage.getAllFilms()
+        List<Film> sortedFilmList = filmStorage.getAllFilms()
                 .stream()
-                .sorted(Comparator.comparingInt(Film :: getLikesCounter)
+                .sorted(Comparator.comparingInt(Film::getLikesCounter)
                 .reversed())
                 .limit(count)
                 .collect(Collectors.toList());
