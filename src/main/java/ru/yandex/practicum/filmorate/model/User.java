@@ -37,8 +37,9 @@ public class User {
         this.login = login;
         if ((name == null) || name.isBlank()) {
             this.name = login;
+        } else {
+            this.name = name;
         }
-        else this.name = name;
         this.birthday = birthday;
     }
 
