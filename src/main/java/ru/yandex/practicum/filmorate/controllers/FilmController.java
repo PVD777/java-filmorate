@@ -3,15 +3,13 @@ package ru.yandex.practicum.filmorate.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
@@ -51,7 +49,8 @@ public class FilmController {
         return filmService.deleteLikeFromFilm(id, userId);
     }
     @GetMapping("/popular")
-    public List<Film> getPopularFilms (@RequestParam(value = "count", required = false, defaultValue = "10") @Positive int count) {
+    public List<Film> getPopularFilms (@RequestParam(value = "count",
+            required = false, defaultValue = "10") @Positive int count) {
         return filmService.getPopularFilm(count);
     }
 
