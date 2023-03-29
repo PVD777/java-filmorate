@@ -58,7 +58,7 @@ public class FilmController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> handleIncorrectFilmId(ConstraintViolationException e){
+    public ResponseEntity<String> handleIncorrectFilmId(ConstraintViolationException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
