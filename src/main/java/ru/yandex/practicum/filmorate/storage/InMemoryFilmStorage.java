@@ -8,14 +8,13 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
+
+    public static final LocalDate FIRST_FILM = LocalDate.of(1895, Month.DECEMBER, 28);
 
     private final Map<Integer, Film> films = new HashMap<>();
     private int idCounter = 0;
@@ -49,16 +48,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(int id) {
-        Film film = films.get(id);
-        if (film == null) {
-            throw new FilmNotFoundException("Фильм не найден");
-        }
-        return films.get(id);
+    public Optional<Film> getFilm(int id) {
+        return Optional.ofNullable(films.get(id));
     }
 
     public void isUpToDateFilm(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
+        if (film.getReleaseDate().isBefore(FIRST_FILM)) {
             log.error("Попытка добавления фильма с несуществующей датой");
             throw new ValidationException("Необходимо проверить дату фильма");
         }

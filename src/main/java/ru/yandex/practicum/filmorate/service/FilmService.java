@@ -17,45 +17,48 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+        this.userService = userService;
+    }
+
+
+    public List<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
+    };
+
+    public Film addFilm(Film film) {
+        return filmStorage.addFilm(film);
+    }
+
+    public Film updateFilm(Film film) {
+        return filmStorage.updateFilm(film);
+    }
+
+    public Film getFilm(int id) {
+        return filmStorage.getFilm(id).orElseThrow(() ->new FilmNotFoundException("Фильм не найден"));
     }
 
     public Film putLikeToFilm(int id, int userId) {
-        Film film = filmStorage.getFilm(id);
-        if (film == null) {
-            throw new FilmNotFoundException("Фильм не найден");
-        }
-        User user = userStorage.getUser(userId);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь не найден");
-        }
+        Film film = getFilm(id);
+        User user = userService.getUser(userId);
         if (film.getIdOfLikers().isEmpty() || !film.getIdOfLikers().contains(userId)) {
             film.setLikesCounter(film.getLikesCounter() + 1);
             film.addIdOfLikers(userId);
         }
-        filmStorage.updateFilm(film);
         return film;
     }
 
     public Film deleteLikeFromFilm(int id, int userId) {
-        Film film = filmStorage.getFilm(id);
-        if (film == null) {
-            throw new FilmNotFoundException("Фильм не найден");
-        }
-        User user = userStorage.getUser(userId);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь не найден");
-        }
+        Film film = getFilm(id);
+        User user = userService.getUser(userId);
         if (film.getIdOfLikers().contains(userId)) {
             film.setLikesCounter(film.getLikesCounter() - 1);
             film.deleteIdOfLikers(userId);
         }
-        filmStorage.updateFilm(film);
         return film;
     }
 

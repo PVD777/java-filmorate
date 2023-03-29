@@ -23,10 +23,8 @@ public class Film {
     @Size(max = 200)
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate releaseDate;
-    @NotNull (message = "Длительность фильма должна быть положительной")
     @Positive (message = "Длительность фильма должна быть положительной")
     private int duration;
     private int likesCounter;

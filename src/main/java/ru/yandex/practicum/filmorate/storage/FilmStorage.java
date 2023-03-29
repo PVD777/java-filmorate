@@ -8,19 +8,15 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 public interface FilmStorage {
 
-
-    @GetMapping()
     public List<Film> getAllFilms();
 
-    @PostMapping()
-    public Film addFilm(@RequestBody @Valid Film film);
+    public Film addFilm(Film film);
 
-    @PutMapping()
-    public Film updateFilm(@RequestBody @Valid Film film);
+    public Film updateFilm(Film film);
 
-    @GetMapping()
-    public Film getFilm(int id);
+    public Optional<Film> getFilm(int id);
 }

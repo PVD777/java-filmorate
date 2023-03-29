@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -15,28 +16,28 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserStorage userStorage;
     private final UserService userService;
 
     @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
-        this.userStorage = userStorage;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping()
     public List<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userService.getAllUsers();
     }
 
     @PostMapping()
     public User register(@RequestBody @Valid User user) {
-        return userStorage.register(user);
+        isSpaceInLogin(user);
+        return userService.register(user);
     }
 
     @PutMapping()
     public User updateUser(@RequestBody @Valid User user) {
-        return userStorage.updateUser(user);
+        isSpaceInLogin(user);
+        return userService.updateUser(user);
     }
 
     @PutMapping("{id}/friends/{friendId}")
@@ -56,12 +57,7 @@ public class UserController {
 
     @GetMapping("{id}")
     public User getUser(@PathVariable int id) {
-        User user = userStorage.getUser(id);
-        if (user == null) {
-            throw new UserNotFoundException("Запрошенный пользователь не существует");
-        } else {
-            return user;
-        }
+        return userService.getUser(id);
     }
 
     @GetMapping("/{id}/friends")
@@ -69,5 +65,12 @@ public class UserController {
         return userService.getFriendsOfId(id);
     }
 
+
+    private void isSpaceInLogin(User user) {
+        if (user.getLogin().contains(" ")) {
+            log.warn("В логине присутствуют пробелы");
+            throw new ValidationException("В логине присутствуют пробелы");
+        }
+    }
 }
 

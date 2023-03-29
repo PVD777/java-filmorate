@@ -6,10 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,8 +17,9 @@ public class User {
     @PositiveOrZero
     private int id;
     @Email
+    @NotEmpty
     private String email;
-    @NotNull
+    @NotBlank
     private String login;
     private String name;
     @PastOrPresent
@@ -30,7 +28,7 @@ public class User {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate birthday;
 
-    Set<Integer> friedndsId = new HashSet<>();
+    private Set<Integer> friedndsId = new HashSet<>();
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
