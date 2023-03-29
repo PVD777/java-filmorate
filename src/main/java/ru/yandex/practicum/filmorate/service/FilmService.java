@@ -26,7 +26,7 @@ public class FilmService {
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
-    };
+    }
 
     public Film addFilm(Film film) {
         return filmStorage.addFilm(film);
@@ -37,7 +37,7 @@ public class FilmService {
     }
 
     public Film getFilm(int id) {
-        return filmStorage.getFilm(id).orElseThrow(() ->new FilmNotFoundException("Фильм не найден"));
+        return filmStorage.getFilm(id).orElseThrow(() -> new FilmNotFoundException("Фильм не найден"));
     }
 
     public Film putLikeToFilm(int id, int userId) {
