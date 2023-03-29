@@ -55,7 +55,7 @@ public class UserService {
         User user2 = getUser(user2id);
         return user1.getFriedndsId().stream()
                 .filter(user2.getFriedndsId()::contains)
-                .map(this :: getUser)
+                .map(this::getUser)
                 .collect(Collectors.toList());
     }
 
