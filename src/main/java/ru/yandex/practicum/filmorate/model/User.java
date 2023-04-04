@@ -1,10 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -20,12 +17,12 @@ public class User {
     @NotEmpty
     private String email;
     @NotBlank
+    @Pattern(regexp = "[A-Za-z0-9]+")
     private String login;
     private String name;
+    @NotNull
     @PastOrPresent
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate birthday;
 
     private Set<Integer> friedndsId = new HashSet<>();

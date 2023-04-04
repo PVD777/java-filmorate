@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.validator.IsAfter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -21,7 +21,8 @@ public class Film {
     @Size(max = 200)
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @NotNull
+    @IsAfter(current = "1895-12-28")
     private LocalDate releaseDate;
     @Positive (message = "Длительность фильма должна быть положительной")
     private int duration;

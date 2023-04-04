@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -26,7 +26,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        isUpToDateFilm(film);
         film.setId(++idCounter);
         films.put(film.getId(), film);
         log.info("Добавлен новый фильм {}", film.getName());
@@ -36,13 +35,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         if (films.containsKey(film.getId())) {
-            isUpToDateFilm(film);
             films.put(film.getId(), film);
             log.info("Выполнено обновление фильма {}", film.getName());
             return film;
         } else {
-            log.error("Попытка обновления фильма с несуществующим id {}", film.getId());
-            throw new ValidationException("Фильм с таким id не существует");
+            throw new FilmNotFoundException("Фильм с таким id не существует");
         }
     }
 
@@ -51,10 +48,4 @@ public class InMemoryFilmStorage implements FilmStorage {
         return Optional.ofNullable(films.get(id));
     }
 
-    public void isUpToDateFilm(Film film) {
-        if (film.getReleaseDate().isBefore(FIRST_FILM)) {
-            log.error("Попытка добавления фильма с несуществующей датой");
-            throw new ValidationException("Необходимо проверить дату фильма");
-        }
-    }
 }
