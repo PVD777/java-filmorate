@@ -1,56 +1,56 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.*;
+import javax.validation.constraints.Positive;
+import java.util.List;
 
-@Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/films")
+@Validated
 public class FilmController {
 
-    private final Map<Integer, Film> films = new HashMap<>();
-    private int idCounter = 0;
+    private final FilmService filmService;
 
     @GetMapping()
     public List<Film> getAllFilms() {
-        return new ArrayList<>(films.values());
+        return filmService.getAllFilms();
     }
 
     @PostMapping()
-    public Film addFilm (@RequestBody @Valid Film film) {
-        isUpToDateFilm(film);
-        film.setId(++idCounter);
-        films.put(film.getId(), film);
-        log.info("Добавлен новый фильм {}", film.getName());
-        return film;
+    public Film addFilm(@RequestBody @Valid Film film) {
+        return filmService.addFilm(film);
     }
 
     @PutMapping()
-    public Film updateFilm (@RequestBody @Valid Film film) {
-        if (films.containsKey(film.getId())) {
-            isUpToDateFilm(film);
-            films.put(film.getId(), film);
-            log.info("Выполнено обновление фильма {}", film.getName());
-            return film;
-        }
-        else {
-            log.error("Попытка обновления фильма с несуществующим id {}", film.getId());
-            throw new ValidationException("Фильм с таким id не существует");
-        }
-
+    public Film updateFilm(@RequestBody @Valid Film film) {
+        return filmService.updateFilm(film);
     }
 
-    public void isUpToDateFilm(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
-            log.error("Попытка добавления фильма с несуществующей датой");
-            throw new ValidationException("Необходимо проверить дату фильма");
-        }
+    @PutMapping("/{id}/like/{userId}")
+    public Film putLikeToFilm(@PathVariable int id, @PathVariable int userId) {
+        return filmService.putLikeToFilm(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Film deleteLikeFromFilm(@PathVariable int id, @PathVariable int userId) {
+        return filmService.deleteLikeFromFilm(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(value = "count", defaultValue = "10") @Positive int count) {
+        return filmService.getPopularFilm(count);
+    }
+
+    @GetMapping("{id}")
+    public Film getFilm(@PathVariable int id) {
+            return filmService.getFilm(id);
     }
 }

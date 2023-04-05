@@ -1,54 +1,60 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
+    private final UserService userService;
 
-    private Map<Integer, User> users = new HashMap<>();
-    private int idGenerator = 0;
     @GetMapping()
     public List<User> getAllUsers() {
-        return new ArrayList<>(users.values());
+        return userService.getAllUsers();
     }
 
     @PostMapping()
     public User register(@RequestBody @Valid User user) {
-        isSpaceInLogin(user);
-        user.setId(++idGenerator);
-        users.put(user.getId(), user);
-        log.info("Добавлен новый пользователь {}", user.getName());
-        return user;
+        return userService.register(user);
     }
 
     @PutMapping()
-    public User updateUser (@RequestBody @Valid User user) {
-        if (users.containsKey(user.getId())) {
-            isSpaceInLogin(user);
-            users.put(user.getId(), user);
-            log.info("Выполнено обновление пользовтеля {}", user.getName());
-            return user;
-        }
-        else
-            log.error("Попытка обновления пользователя с несуществующим id {}", user.getId());
-        throw new ValidationException("Пользователь с таким id не существует");
+    public User updateUser(@RequestBody @Valid User user) {
+        return userService.updateUser(user);
     }
 
-    public void isSpaceInLogin (User user) {
-        if (user.getLogin().contains(" ")) {
-            log.warn("В логине присутствуют пробелы");
-            throw new ValidationException("В логине присутствуют пробелы");
-        }
+    @PutMapping("{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+        userService.addFriend(id, friendId);
     }
+
+    @DeleteMapping("{id}/friends/{friendId}")
+    public void deleteFrind(@PathVariable int id, @PathVariable int friendId) {
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommenFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.getCommonFriends(id, otherId);
+    }
+
+    @GetMapping("{id}")
+    public User getUser(@PathVariable int id) {
+        return userService.getUser(id);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriendOfId(@PathVariable int id) {
+        return userService.getFriendsOfId(id);
+    }
+
 }
+
