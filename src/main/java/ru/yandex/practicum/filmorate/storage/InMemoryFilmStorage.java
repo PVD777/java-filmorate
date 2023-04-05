@@ -13,8 +13,6 @@ import java.util.*;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
-    public static final LocalDate FIRST_FILM = LocalDate.of(1895, Month.DECEMBER, 28);
-
     private final Map<Integer, Film> films = new HashMap<>();
     private int idCounter = 0;
 
@@ -39,7 +37,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.info("Выполнено обновление фильма {}", film.getName());
             return film;
         } else {
-            throw new FilmNotFoundException("Фильм с таким id не существует");
+            throw new FilmNotFoundException("Фильм с id " + film.getId() + " не существует");
         }
     }
 
