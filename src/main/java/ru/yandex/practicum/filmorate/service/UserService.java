@@ -2,18 +2,24 @@ package ru.yandex.practicum.filmorate.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.friends.FriendsStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class UserService {
+
+    @Qualifier(value = "userDbStorage")
     private final UserStorage userStorage;
+    private final FriendsStorage friendsStorage;
 
     public List<User> getAllUsers() {
         return  userStorage.getAllUsers();
@@ -32,17 +38,11 @@ public class UserService {
     }
 
     public void addFriend(int user1id, int user2id) {
-        User user1 = getUser(user1id);
-        User user2 = getUser(user2id);
-        user1.addToFriendsId(user2id);
-        user2.addToFriendsId(user1id);
+        friendsStorage.addToFriend(user1id, user2id);
     }
 
     public void deleteFriend(int user1id, int user2id) {
-        User user1 = getUser(user1id);
-        User user2 = getUser(user2id);
-        user1.removeFromFriendsId(user2id);
-        user2.removeFromFriendsId(user1id);
+        friendsStorage.removeFromFriend(user1id, user2id);
     }
 
     public List<User> getCommonFriends(int user1id, int user2id) {

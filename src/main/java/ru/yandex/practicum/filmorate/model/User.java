@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 
 @Data
+@NoArgsConstructor
 public class User {
     @PositiveOrZero
     private int id;
@@ -36,6 +38,13 @@ public class User {
             this.name = name;
         }
         this.birthday = birthday;
+    }
+
+    public String getName() {
+        if ((name == null) || name.isBlank()) {
+            return login;
+        }
+        return name;
     }
 
     public void addToFriendsId(Integer id) {

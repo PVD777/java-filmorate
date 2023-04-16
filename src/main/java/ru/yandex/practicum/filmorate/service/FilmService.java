@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,9 +16,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class FilmService {
-
+    @Qualifier(value = "filmDbStorage")
     private final FilmStorage filmStorage;
+
     private final UserService userService;
+    private final GenreService genreService;
+    private final MpaService mpaService;
+    private final LikesStorage likesStorage;
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
@@ -37,20 +43,14 @@ public class FilmService {
     public Film putLikeToFilm(int id, int userId) {
         Film film = getFilm(id);
         User user = userService.getUser(userId);
-        if (film.getIdOfLikers().isEmpty() || !film.getIdOfLikers().contains(userId)) {
-            film.setLikesCounter(film.getLikesCounter() + 1);
-            film.addIdOfLikers(userId);
-        }
+        likesStorage.setLikeToFilm(userId, id);
         return film;
     }
 
     public Film deleteLikeFromFilm(int id, int userId) {
         Film film = getFilm(id);
         User user = userService.getUser(userId);
-        if (film.getIdOfLikers().contains(userId)) {
-            film.setLikesCounter(film.getLikesCounter() - 1);
-            film.deleteIdOfLikers(userId);
-        }
+        likesStorage.deleteLikeFromFilm(userId, id);
         return film;
     }
 
