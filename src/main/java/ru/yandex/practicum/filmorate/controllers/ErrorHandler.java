@@ -35,12 +35,14 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+
     @ExceptionHandler ({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleExceptions(ValidationException e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
