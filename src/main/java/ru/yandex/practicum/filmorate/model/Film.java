@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,7 +22,6 @@ public class Film {
     @NotBlank (message = "Описание фильма не может быть пустым")
     @Size(max = 200)
     private String description;
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull
     @IsAfter(current = "1895-12-28")
     private LocalDate releaseDate;

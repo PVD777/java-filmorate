@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @PositiveOrZero
     private int id;
@@ -24,7 +27,6 @@ public class User {
     private String name;
     @NotNull
     @PastOrPresent
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
     private Set<Integer> friedndsId = new HashSet<>();
@@ -47,11 +49,4 @@ public class User {
         return name;
     }
 
-    public void addToFriendsId(Integer id) {
-        friedndsId.add(id);
-    }
-
-    public void removeFromFriendsId(Integer id) {
-        friedndsId.remove(id);
-    }
 }
