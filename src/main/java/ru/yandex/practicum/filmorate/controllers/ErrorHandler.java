@@ -20,7 +20,6 @@ import javax.validation.ValidationException;
 @Slf4j
 public class ErrorHandler {
 
-
     @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class,
             GenreNotFoundException.class, MpaNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
