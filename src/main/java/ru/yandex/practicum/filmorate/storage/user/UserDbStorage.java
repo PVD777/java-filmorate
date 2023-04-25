@@ -87,6 +87,17 @@ public class UserDbStorage implements UserStorage {
         return  user;
     }
 
+    @Override
+    public void removeUser(int userId) {
+        if (!isUserExists(userId)) {
+            log.info("Удаление пользователя с id " + userId);
+            throw new UserNotFoundException("Указанный пользователь не существует");
+        }
+            String sql = "DELETE FROM USERS WHERE user_id = ?";
+            jdbcTemplate.update(sql, userId);
+            log.info("Пользователь с id = " + userId + " удален");
+            return;
+    }
 
     private boolean isUserExists(int id) {
         String sql = "SELECT count(*) FROM USERS WHERE user_id = ?";

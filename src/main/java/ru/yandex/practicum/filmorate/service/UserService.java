@@ -45,6 +45,10 @@ public class UserService {
         friendsStorage.removeFromFriend(user1id, user2id);
     }
 
+    public void deleteUser(int userId) {
+        userStorage.removeUser(userId);
+    }
+
     public List<User> getCommonFriends(int user1id, int user2id) {
         User user1 = getUser(user1id);
         User user2 = getUser(user2id);
