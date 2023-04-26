@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film addFilm(Film film) {
         Map<String, Object> keys = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("FILMS")
-                .usingColumns("name", "description", "release", "duration","mpa_id")
+                .usingColumns("name", "description", "release", "duration", "mpa_id")
                 .usingGeneratedKeyColumns("film_id")
                 .executeAndReturnKeyHolder(Map.of("name", film.getName(),
                         "description", film.getDescription(),
@@ -66,7 +67,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
         film.setGenres(genreStorage.getFilmGenres(film.getId()));
         log.info("Добавлен новый фильм: id={}", film.getId());
-        return  film;
+        return film;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "UPDATE FILMS SET name = ?, description = ?, release = ?, duration = ?, mpa_id = ?" +
                 " WHERE film_id = " + film.getId();
         jdbcTemplate.update(sql,
-                film.getName(),film.getDescription(),film.getReleaseDate(),film.getDuration(), film.getMpa().getId());
+                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId());
         genreStorage.removeGenres(film);
         genreStorage.addGenre(film);
         film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
@@ -101,15 +102,46 @@ public class FilmDbStorage implements FilmStorage {
         film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
         film.setLikesCounter(likesStorage.getCountOfLike(film.getId()));
         film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
-        log.info("Найден фильм: {} {}", film.getId(),film.getName());
+        log.info("Найден фильм: {} {}", film.getId(), film.getName());
         return Optional.of(film);
 
+    }
+
+    @Override
+    public List<Film> getSearchingFilms(String query, String[] by) {
+        List<String> keyTags = List.of(by);
+        query = "%" + query + "%";
+        if (keyTags.contains("director") && keyTags.contains("title")) {
+            String sql = "SELECT * FROM FILMS AS F " +
+                    "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
+                    "LEFT JOIN FILM_DIRECTOR AS FD ON F.id = FD.film_id " +
+                    "LEFT JOIN DIRECTOR AS D ON FD.director_id = D.id " +
+                    "WHERE D.name ILIKE ? OR F.name ILIKE ? ORDER BY R.RATE DESC";
+            return jdbcTemplate.query(sql, filmRowMapper, query, query);
+        } else if (keyTags.contains("director")) {
+            String sql = "SELECT * FROM FILMS AS F " +
+                    "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
+                    "LEFT JOIN FILM_DIRECTOR AS FD ON F.id = FD.film_id " +
+                    "LEFT JOIN DIRECTOR AS D ON FD.director_id = D.id " +
+                    "WHERE D.name ILIKE ? ORDER BY R.RATE DESC";
+            return jdbcTemplate.query(sql, filmRowMapper, query);
+        } else if (keyTags.contains("title")) {
+            String sql = "SELECT * FROM FILMS AS F " +
+                    "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
+                    "WHERE F.name ILIKE ? ORDER BY R.RATE DESC";
+            return jdbcTemplate.query(sql, filmRowMapper, query);
+        } else {
+            String sql = "SELECT * FROM FILMS AS F " +
+                    "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
+                    "ORDER BY R.RATE DESC";
+            return jdbcTemplate.query(sql, filmRowMapper, query);
+        }
     }
 
 
     private boolean isFilmExists(int id) {
         String sql = "SELECT count(*) FROM FILMS WHERE film_id = ?";
-        int count = jdbcTemplate.queryForObject(sql, new Object[] { id }, Integer.class);
+        int count = jdbcTemplate.queryForObject(sql, new Object[]{id}, Integer.class);
         return count > 0;
     }
 }

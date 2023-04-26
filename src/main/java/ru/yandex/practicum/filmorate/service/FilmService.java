@@ -63,4 +63,8 @@ public class FilmService {
                 .collect(Collectors.toList());
         return sortedFilmList;
     }
+
+    public List<Film> getSearchingFilms(String query, String[] by) {
+        return filmStorage.getSearchingFilms(query, by);
+    }
 }

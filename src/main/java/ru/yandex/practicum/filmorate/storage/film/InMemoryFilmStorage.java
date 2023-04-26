@@ -44,4 +44,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         return Optional.ofNullable(films.get(id));
     }
 
+    @Override
+    public List<Film> getSearchingFilms(String query, String[] by) {
+        return null;
+    }
+
 }
