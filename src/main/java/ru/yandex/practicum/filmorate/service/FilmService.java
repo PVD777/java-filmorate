@@ -54,13 +54,27 @@ public class FilmService {
         return film;
     }
 
-    public List<Film> getPopularFilm(int count) {
+    public List<Film> getPopularFilm(int count, int genreId, int year) {
         List<Film> sortedFilmList = filmStorage.getAllFilms()
                 .stream()
                 .sorted(Comparator.comparingInt(Film::getLikesCounter)
                 .reversed())
                 .limit(count)
                 .collect(Collectors.toList());
+        if(genreId !=0) {
+            sortedFilmList = sortedFilmList
+                    .stream()
+                    .filter(f -> f.getGenres().contains(genreService.getGenre(genreId)))
+                    .collect(Collectors.toList());
+        }
+
+        if (year != 0) {
+            sortedFilmList = sortedFilmList
+                    .stream()
+                    .filter(f -> f.getReleaseDate().getYear() == year)
+                    .collect(Collectors.toList());
+        }
         return sortedFilmList;
     }
+
 }
