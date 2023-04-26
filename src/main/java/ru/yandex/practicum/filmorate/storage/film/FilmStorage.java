@@ -14,4 +14,6 @@ public interface FilmStorage {
     public Film updateFilm(Film film);
 
     public Optional<Film> getFilm(int id);
+
+    public Film deleteFilm(Film film);
 }

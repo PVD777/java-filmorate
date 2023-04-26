@@ -54,6 +54,13 @@ public class FilmService {
         return film;
     }
 
+    public Film deleteFilm(int filmId) {
+        Film film = getFilm(filmId);
+        filmStorage.deleteFilm(film);
+        return film;
+
+    }
+
     public List<Film> getPopularFilm(int count) {
         List<Film> sortedFilmList = filmStorage.getAllFilms()
                 .stream()

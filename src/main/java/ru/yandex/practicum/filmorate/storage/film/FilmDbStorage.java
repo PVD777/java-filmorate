@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
@@ -87,6 +88,18 @@ public class FilmDbStorage implements FilmStorage {
         film.setGenres(genreStorage.getFilmGenres(film.getId()));
         log.info("Фильм с идентификатором {} обновлен.", film.getId());
 
+        return film;
+    }
+
+    @Override
+    public Film deleteFilm(Film film) {
+        if (!isFilmExists(film.getId())) {
+            log.info("Удаление фильма с id " + film.getId());
+            throw new FilmNotFoundException("Указанный фильм не существует");
+        }
+        String sql = "DELETE FROM FILMS WHERE film_id = ?";
+        jdbcTemplate.update(sql, film.getId());
+        log.info("Фильм с id = " + film.getId() + " удален");
         return film;
     }
 
