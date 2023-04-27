@@ -11,6 +11,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -31,6 +32,7 @@ public class Film {
     private Set<Integer> idOfLikers;
     private Mpa mpa;
     private Set<Genre> genres;
+    private List<Director> directors;
 
     public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
@@ -71,6 +73,25 @@ public class Film {
         this.genres = genres;
         this.mpa = mpa;
         idOfLikers = new HashSet<>();
+    }
+
+    public Film(int id,
+                String name,
+                String description,
+                LocalDate releaseDate,
+                int duration,
+                Mpa mpa,
+                Set<Genre> genres,
+                List<Director> directors
+    ) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
+        this.genres = genres;
+        this.directors = directors;
     }
 
     public void addIdOfLikers(int id) {

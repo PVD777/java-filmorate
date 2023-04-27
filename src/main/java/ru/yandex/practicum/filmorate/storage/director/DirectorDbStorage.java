@@ -37,13 +37,12 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public List<Director> getByFilm(Integer idFilm) {
+    public List<Director> getByFilm(Integer filmId) {
         String sql = "select d.director_id, d.name " +
-                "from director as d " +
-                "left join film_director as fd on d.director_id = fd.director_id " +
-                "where film_id = ?";
-        return null; //TODO не факт что пригодиться.
-
+                "from film_director as fd " +
+                "left join director as d on d.director_id = fd.director_id " +
+                "where fd.film_id = ?";
+        return jdbcTemplate.query(sql, directorRowMapper(), filmId);
     }
 
     @Override
@@ -70,7 +69,6 @@ public class DirectorDbStorage implements DirectorStorage {
             log.warn("Режиссёр с id={} не найден.", id);
             throw new DirectorNotFoundException("Режиссёр с id " + id + " не найден.");
         }
-
     }
 
     @Override
