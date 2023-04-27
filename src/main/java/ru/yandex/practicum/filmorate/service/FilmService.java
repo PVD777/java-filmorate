@@ -61,7 +61,7 @@ public class FilmService {
                 .reversed())
                 .limit(count)
                 .collect(Collectors.toList());
-        if(genreId !=0) {
+        if (genreId != 0) {
             sortedFilmList = sortedFilmList
                     .stream()
                     .filter(f -> f.getGenres().contains(genreService.getGenre(genreId)))
