@@ -63,7 +63,7 @@ public class DirectorDbStorage implements DirectorStorage {
         String sql = "update director set name = ? where director_id = ?";
 
         if (isExists(id)) {
-            jdbcTemplate.update(sql, director.getName());
+            jdbcTemplate.update(sql, director.getName(), id);
 
             return getById(id);
         } else {
@@ -93,7 +93,7 @@ public class DirectorDbStorage implements DirectorStorage {
 
     private boolean isExists(Integer id) {
         String sql = "select * from director where director_id = ?";
-        SqlRowSet row = jdbcTemplate.queryForRowSet(sql);
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql, id);
 
         return row.next();
     }
