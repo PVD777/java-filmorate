@@ -109,32 +109,45 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getSearchingFilms(String query, String[] by) {
-        List<String> keyTags = List.of(by);
+        List<String> keyTags;
+        if (by == null) {
+            String sql = "SELECT * FROM FILMS AS F " +
+                    "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
+                    "ON F.film_id = R.film_id " +
+                    "ORDER BY R.RATE DESC";
+            return jdbcTemplate.query(sql, filmRowMapper);
+        } else {
+            keyTags = List.of(by);
+        }
         query = "%" + query + "%";
         if (keyTags.contains("director") && keyTags.contains("title")) {
             String sql = "SELECT * FROM FILMS AS F " +
                     "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
-                    "LEFT JOIN FILM_DIRECTOR AS FD ON F.id = FD.film_id " +
+                    "ON F.film_id = R.film_id " +
+                    "LEFT JOIN FILM_DIRECTOR AS FD ON F.film_id = FD.film_id " +
                     "LEFT JOIN DIRECTOR AS D ON FD.director_id = D.id " +
                     "WHERE D.name ILIKE ? OR F.name ILIKE ? ORDER BY R.RATE DESC";
             return jdbcTemplate.query(sql, filmRowMapper, query, query);
         } else if (keyTags.contains("director")) {
             String sql = "SELECT * FROM FILMS AS F " +
                     "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
-                    "LEFT JOIN FILM_DIRECTOR AS FD ON F.id = FD.film_id " +
+                    "ON F.film_id = R.film_id " +
+                    "LEFT JOIN FILM_DIRECTOR AS FD ON F.film_id = FD.film_id " +
                     "LEFT JOIN DIRECTOR AS D ON FD.director_id = D.id " +
                     "WHERE D.name ILIKE ? ORDER BY R.RATE DESC";
             return jdbcTemplate.query(sql, filmRowMapper, query);
         } else if (keyTags.contains("title")) {
             String sql = "SELECT * FROM FILMS AS F " +
                     "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
+                    "ON F.film_id = R.film_id " +
                     "WHERE F.name ILIKE ? ORDER BY R.RATE DESC";
             return jdbcTemplate.query(sql, filmRowMapper, query);
         } else {
             String sql = "SELECT * FROM FILMS AS F " +
                     "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
+                    "ON F.film_id = R.film_id " +
                     "ORDER BY R.RATE DESC";
-            return jdbcTemplate.query(sql, filmRowMapper, query);
+            return jdbcTemplate.query(sql, filmRowMapper);
         }
     }
 
