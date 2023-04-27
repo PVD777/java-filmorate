@@ -2,11 +2,13 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.SortingFilm;
@@ -15,6 +17,8 @@ import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +28,8 @@ import java.util.Optional;
 @Component
 @AllArgsConstructor
 public class FilmDbStorage implements FilmStorage {
-
+    private static final String ADD_FILM_DIRECTOR = "insert into film_director (film_id, director_id) values (?, ?)";
+    private static final String DELETE_FILM_DIRECTOR = "delete from film_director where film_id = ?";
     private final JdbcTemplate jdbcTemplate;
     private MpaStorage mpaStorage;
     private LikesStorage likesStorage;
@@ -53,43 +58,60 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        Map<String, Object> keys = new SimpleJdbcInsert(jdbcTemplate)
+        List<Director> directors = film.getDirectors();
+        int filmId = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("FILMS")
                 .usingColumns("name", "description", "release", "duration","mpa_id")
                 .usingGeneratedKeyColumns("film_id")
-                .executeAndReturnKeyHolder(Map.of("name", film.getName(),
+                .executeAndReturnKey(Map.of("name", film.getName(),
                         "description", film.getDescription(),
                         "release", film.getReleaseDate(),
                         "duration", film.getDuration(),
                         "mpa_id", film.getMpa().getId()))
-                .getKeys();
-        film.setId((Integer) keys.get("film_id"));
+                .intValue();
+        film.setId(filmId);
         genreStorage.addGenre(film);
+
+        if (!directors.isEmpty()) {
+            jdbcTemplate.batchUpdate(ADD_FILM_DIRECTOR, initFilmDirectorValues(filmId, directors));
+        }
+
         film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
         film.setLikesCounter(likesStorage.getCountOfLike(film.getId()));
         film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
         film.setGenres(genreStorage.getFilmGenres(film.getId()));
         log.info("Добавлен новый фильм: id={}", film.getId());
+
         return  film;
     }
 
     @Override
     public Film updateFilm(Film film) {
+        int filmId = film.getId();
+        List<Director> directors = film.getDirectors();
+
         if (!isFilmExists(film.getId())) {
-            log.info("Фильм с идентификатором {} отсутствует.", film.getId());
-            throw new FilmNotFoundException("Фильм с id " + film.getId() + " не найден");
+            log.info("Фильм с идентификатором {} отсутствует.", filmId);
+            throw new FilmNotFoundException("Фильм с id " + filmId + " не найден");
         }
+
         String sql = "UPDATE FILMS SET name = ?, description = ?, release = ?, duration = ?, mpa_id = ?" +
-                " WHERE film_id = " + film.getId();
+                " WHERE film_id = " + filmId;
         jdbcTemplate.update(sql,
                 film.getName(),film.getDescription(),film.getReleaseDate(),film.getDuration(), film.getMpa().getId());
         genreStorage.removeGenres(film);
         genreStorage.addGenre(film);
+
+        jdbcTemplate.update(DELETE_FILM_DIRECTOR, filmId);
+        if (!directors.isEmpty()) {
+            jdbcTemplate.batchUpdate(ADD_FILM_DIRECTOR, initFilmDirectorValues(filmId, directors));
+        }
+
         film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
-        film.setLikesCounter(likesStorage.getCountOfLike(film.getId()));
-        film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
-        film.setGenres(genreStorage.getFilmGenres(film.getId()));
-        log.info("Фильм с идентификатором {} обновлен.", film.getId());
+        film.setLikesCounter(likesStorage.getCountOfLike(filmId));
+        film.setIdOfLikers(likesStorage.getIdOfLikers(filmId));
+        film.setGenres(genreStorage.getFilmGenres(filmId));
+        log.info("Фильм с идентификатором {} обновлен.", filmId);
 
         return film;
     }
@@ -145,5 +167,20 @@ public class FilmDbStorage implements FilmStorage {
                 genreStorage.getFilmGenres(rs.getInt("film_id")),
                 directorStorage.getByFilm(rs.getInt("film_id"))
         ));
+    }
+
+    private BatchPreparedStatementSetter initFilmDirectorValues(Integer filmId, List<Director> directors) {
+        return new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, filmId.toString());
+                ps.setString(2, directors.get(i).getId().toString());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return directors.size();
+            }
+        };
     }
 }
