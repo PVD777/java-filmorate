@@ -19,6 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DirectorDbStorage implements DirectorStorage {
     private final JdbcTemplate jdbcTemplate;
+
     @Override
     public List<Director> getAll() {
         String sql = "select * from director";
