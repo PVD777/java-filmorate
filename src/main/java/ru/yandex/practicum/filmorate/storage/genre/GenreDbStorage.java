@@ -48,12 +48,6 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Set<Genre> getFilmGenres(int id) {
-
-       /* String sql = "SELECT genre.genre_id, name FROM FILM_GENRE" +
-                "" +
-                "JOIN genre ON film_genre.genre_id = genre.genre_id\n" +
-                "WHERE film_id = ?\n" +
-                "ORDER BY genre.genre_id";*/
         String sql = "SELECT genre_id FROM FILM_GENRE WHERE film_id = ?";
         Set<Genre> genres = new HashSet<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);

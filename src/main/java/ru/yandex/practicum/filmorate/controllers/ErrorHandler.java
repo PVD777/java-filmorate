@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
 import javax.validation.ConstraintViolationException;
@@ -21,7 +18,7 @@ import javax.validation.ValidationException;
 public class ErrorHandler {
 
     @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class,
-            GenreNotFoundException.class, MpaNotFoundException.class})
+            GenreNotFoundException.class, MpaNotFoundException.class, ReviewNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleObjectNotFound(RuntimeException e) {
         return  new ErrorResponse(e.getMessage());
