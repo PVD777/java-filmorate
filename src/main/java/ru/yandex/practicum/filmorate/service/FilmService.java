@@ -66,6 +66,6 @@ public class FilmService {
     }
 
     public List<Film> getFilmsByDirectorId(Integer directorId, SortingFilm sortBy) {
-        return getFilmsByDirectorId(directorId, sortBy);
+        return filmStorage.getFilmsByDirectorId(directorId, sortBy);
     }
 }
