@@ -16,7 +16,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class RecommendateDbStorage implements  RecommendateFilmStorage{
+public class RecommendateDbStorage implements  RecommendateFilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private final FilmDbStorage filmDbStorage;
