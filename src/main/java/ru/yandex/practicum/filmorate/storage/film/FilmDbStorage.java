@@ -20,6 +20,7 @@ import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,7 +59,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        List<Director> directors = film.getDirectors();
+        List<Director> directors = new ArrayList<>(film.getDirectors());
         int filmId = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("FILMS")
                 .usingColumns("name", "description", "release", "duration","mpa_id")
@@ -77,10 +78,11 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
-        film.setLikesCounter(likesStorage.getCountOfLike(film.getId()));
-        film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
-        film.setGenres(genreStorage.getFilmGenres(film.getId()));
-        log.info("Добавлен новый фильм: id={}", film.getId());
+        film.setLikesCounter(likesStorage.getCountOfLike(filmId));
+        film.setIdOfLikers(likesStorage.getIdOfLikers(filmId));
+        film.setGenres(genreStorage.getFilmGenres(filmId));
+        film.setDirectors(directorStorage.getByFilm(filmId));
+        log.info("Добавлен новый фильм: id={}", filmId);
 
         return  film;
     }
@@ -88,7 +90,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         int filmId = film.getId();
-        List<Director> directors = film.getDirectors();
+        List<Director> directors = new ArrayList<>(film.getDirectors());
 
         if (!isFilmExists(film.getId())) {
             log.info("Фильм с идентификатором {} отсутствует.", filmId);
@@ -111,6 +113,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setLikesCounter(likesStorage.getCountOfLike(filmId));
         film.setIdOfLikers(likesStorage.getIdOfLikers(filmId));
         film.setGenres(genreStorage.getFilmGenres(filmId));
+        film.setDirectors(directorStorage.getByFilm(filmId));
         log.info("Фильм с идентификатором {} обновлен.", filmId);
 
         return film;
