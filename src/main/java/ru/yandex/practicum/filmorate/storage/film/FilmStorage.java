@@ -14,4 +14,8 @@ public interface FilmStorage {
     Film updateFilm(Film film);
 
     Optional<Film> getFilm(int id);
+
+    List<Film> getSearchingFilms(String query, String[] by);
+
+    List<Film> getFilmsByDirectorId(Integer directorId, SortingFilm sortBy);
 }

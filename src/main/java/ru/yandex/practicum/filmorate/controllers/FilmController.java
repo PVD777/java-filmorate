@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.SortingFilm;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -51,6 +52,17 @@ public class FilmController {
 
     @GetMapping("{id}")
     public Film getFilm(@PathVariable int id) {
-            return filmService.getFilm(id);
+        return filmService.getFilm(id);
+    }
+
+    @GetMapping("/search")
+    public List<Film> getSearchingFilms(@RequestParam(value = "query", required = false) String query,
+                                        @RequestParam(value = "by", required = false) String[] by) {
+        return filmService.getSearchingFilms(query, by);
+    }
+
+    @GetMapping(value = "/director/{directorId}")
+    public List<Film> getFilmsByDirectorId(@PathVariable Integer directorId, @RequestParam SortingFilm sortBy) {
+        return filmService.getFilmsByDirectorId(directorId, sortBy);
     }
 }
