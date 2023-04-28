@@ -62,6 +62,7 @@ public class DirectorDbStorage implements DirectorStorage {
         Integer id = director.getId();
         String sql = "update director set name = ? where director_id = ?";
         checkDirector(id);
+        jdbcTemplate.update(sql, director.getName(), id);
 
         return getById(id);
     }
