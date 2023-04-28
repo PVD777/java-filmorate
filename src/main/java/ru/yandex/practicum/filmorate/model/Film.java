@@ -10,27 +10,30 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
 public class Film {
     private int id;
-    @NotBlank (message = "Название фильма не может быть пустым")
+    @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
-    @NotBlank (message = "Описание фильма не может быть пустым")
+    @NotBlank(message = "Описание фильма не может быть пустым")
     @Size(max = 200)
     private String description;
     @NotNull
     @IsAfter(current = "1895-12-28")
     private LocalDate releaseDate;
-    @Positive (message = "Длительность фильма должна быть положительной")
+    @Positive(message = "Длительность фильма должна быть положительной")
     private int duration;
     private int likesCounter;
     private Set<Integer> idOfLikers;
     private Mpa mpa;
     private Set<Genre> genres;
+    private List<Director> directors = new ArrayList<>();
 
     public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
@@ -41,8 +44,6 @@ public class Film {
         genres = new HashSet<>();
     }
 
-
-
     public Film(String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
         this.name = name;
         this.description = description;
@@ -52,7 +53,6 @@ public class Film {
         idOfLikers = new HashSet<>();
         genres = new HashSet<>();
     }
-
 
     public Film(String name, String description, LocalDate releaseDate, int duration, Set<Genre> genres) {
         this.name = name;
@@ -71,6 +71,25 @@ public class Film {
         this.genres = genres;
         this.mpa = mpa;
         idOfLikers = new HashSet<>();
+    }
+
+    public Film(int id,
+                String name,
+                String description,
+                LocalDate releaseDate,
+                int duration,
+                Mpa mpa,
+                Set<Genre> genres,
+                List<Director> directors
+    ) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
+        this.genres = genres;
+        this.directors = directors;
     }
 
     public void addIdOfLikers(int id) {
