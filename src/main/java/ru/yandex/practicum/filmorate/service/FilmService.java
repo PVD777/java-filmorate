@@ -63,4 +63,8 @@ public class FilmService {
                 .collect(Collectors.toList());
         return sortedFilmList;
     }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
 }

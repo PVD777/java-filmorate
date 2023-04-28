@@ -51,7 +51,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film addFilm(Film film) {
         Map<String, Object> keys = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("FILMS")
-                .usingColumns("name", "description", "release", "duration","mpa_id")
+                .usingColumns("name", "description", "release", "duration", "mpa_id")
                 .usingGeneratedKeyColumns("film_id")
                 .executeAndReturnKeyHolder(Map.of("name", film.getName(),
                         "description", film.getDescription(),
@@ -66,7 +66,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
         film.setGenres(genreStorage.getFilmGenres(film.getId()));
         log.info("Добавлен новый фильм: id={}", film.getId());
-        return  film;
+        return film;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "UPDATE FILMS SET name = ?, description = ?, release = ?, duration = ?, mpa_id = ?" +
                 " WHERE film_id = " + film.getId();
         jdbcTemplate.update(sql,
-                film.getName(),film.getDescription(),film.getReleaseDate(),film.getDuration(), film.getMpa().getId());
+                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId());
         genreStorage.removeGenres(film);
         genreStorage.addGenre(film);
         film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
@@ -101,15 +101,22 @@ public class FilmDbStorage implements FilmStorage {
         film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
         film.setLikesCounter(likesStorage.getCountOfLike(film.getId()));
         film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
-        log.info("Найден фильм: {} {}", film.getId(),film.getName());
+        log.info("Найден фильм: {} {}", film.getId(), film.getName());
         return Optional.of(film);
 
+    }
+
+    @Override
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        String sql = "SELECT * FROM FILMS f, LIKES l, LIKES ll " +
+                "WHERE f.film_id = l.film_id AND f.film_id = ll.film_id AND l.user_id = ? AND ll.user_id = ?";
+        return jdbcTemplate.query(sql, filmRowMapper, userId, friendId);
     }
 
 
     private boolean isFilmExists(int id) {
         String sql = "SELECT count(*) FROM FILMS WHERE film_id = ?";
-        int count = jdbcTemplate.queryForObject(sql, new Object[] { id }, Integer.class);
+        int count = jdbcTemplate.queryForObject(sql, new Object[]{id}, Integer.class);
         return count > 0;
     }
 }
