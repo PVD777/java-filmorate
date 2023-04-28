@@ -17,9 +17,8 @@ import javax.validation.ValidationException;
 @Slf4j
 public class ErrorHandler {
 
-
-    @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class,
-            GenreNotFoundException.class, MpaNotFoundException.class, DirectorNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class, DirectorNotFoundException.class,
+            GenreNotFoundException.class, MpaNotFoundException.class, ReviewNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleObjectNotFound(RuntimeException e) {
         return  new ErrorResponse(e.getMessage());
