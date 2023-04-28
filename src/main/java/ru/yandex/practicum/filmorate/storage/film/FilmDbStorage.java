@@ -49,6 +49,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setLikesCounter(likesStorage.getCountOfLike(film.getId()));
         film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
         film.setGenres(genreStorage.getFilmGenres(film.getId()));
+        film.setDirectors(directorStorage.getByFilm(film.getId()));
         return film;
     };
 
@@ -125,18 +126,22 @@ public class FilmDbStorage implements FilmStorage {
             log.info("Фильм с идентификатором {} отсутствует.", id);
             throw new FilmNotFoundException("Фильм с id " + id + " не найден");
         }
-        Film film = jdbcTemplate.queryForObject("SELECT * FROM FILMS WHERE FILM_ID = ?",
-                filmRowMapper, id);
-        film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
-        film.setLikesCounter(likesStorage.getCountOfLike(film.getId()));
-        film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
-        log.info("Найден фильм: {} {}", film.getId(),film.getName());
-        return Optional.of(film);
 
+        String sql = "SELECT * FROM FILMS WHERE FILM_ID = ?";
+        Film film = jdbcTemplate.queryForObject(sql, filmRowMapper, id);
+
+        film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
+        film.setLikesCounter(likesStorage.getCountOfLike(id));
+        film.setIdOfLikers(likesStorage.getIdOfLikers(id));
+        film.setDirectors(directorStorage.getByFilm(id));
+        log.info("Найден фильм: {} {}", id, film.getName());
+
+        return Optional.of(film);
     }
 
     @Override
     public List<Film> getFilmsByDirectorId(Integer directorId, SortingFilm sortBy) {
+        directorStorage.checkDirector(directorId);
         String sql = "select f.film_id, f.name, f.description, f.duration, f.release, f.mpa_id, mr.mpaName " +
                 "from films as f " +
                 "left join mpa_rating as mr on f.mpa_id = mr.mpa_id " +

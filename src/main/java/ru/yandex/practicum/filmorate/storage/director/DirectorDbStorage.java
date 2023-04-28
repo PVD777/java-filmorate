@@ -61,23 +61,21 @@ public class DirectorDbStorage implements DirectorStorage {
     public Director updateDirector(Director director) {
         Integer id = director.getId();
         String sql = "update director set name = ? where director_id = ?";
+        checkDirector(id);
 
-        if (isExists(id)) {
-            jdbcTemplate.update(sql, director.getName(), id);
-
-            return getById(id);
-        } else {
-            log.warn("Режиссёр с id={} не найден.", id);
-            throw new DirectorNotFoundException("Режиссёр с id " + id + " не найден.");
-        }
+        return getById(id);
     }
 
     @Override
     public void deleteDirector(Integer id) {
-        if (isExists(id)) {
-            String sql = "delete from director where director_id = ?";
-            jdbcTemplate.update(sql, id);
-        } else {
+        checkDirector(id);
+        String sql = "delete from director where director_id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public void checkDirector(Integer id) {
+        if (!isExists(id)) {
             log.warn("Режиссёр с id={} не найден.", id);
             throw new DirectorNotFoundException("Режиссёр с id " + id + " не найден.");
         }
