@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.SortingFilm;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
+import ru.yandex.practicum.filmorate.storage.recommendate.RecommendateFilmStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class FilmService {
     @Qualifier(value = "filmDbStorage")
     private final FilmStorage filmStorage;
+    private final RecommendateFilmStorage recommendateFilmStorage;
 
     private final UserService userService;
     private final GenreService genreService;
@@ -64,6 +66,7 @@ public class FilmService {
                 .collect(Collectors.toList());
         return sortedFilmList;
     }
+
 
     public List<Film> getFilmsByDirectorId(Integer directorId, SortingFilm sortBy) {
         return filmStorage.getFilmsByDirectorId(directorId, sortBy);
