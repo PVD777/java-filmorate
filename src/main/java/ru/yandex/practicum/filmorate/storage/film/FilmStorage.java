@@ -16,5 +16,7 @@ public interface FilmStorage {
 
     public Optional<Film> getFilm(int id);
 
+    public List<Film> getSearchingFilms(String query, String[] by);
+
     public List<Film> getFilmsByDirectorId(Integer directorId, SortingFilm sortBy);
 }
