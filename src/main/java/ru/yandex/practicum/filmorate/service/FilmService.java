@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.SortingFilm;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
@@ -62,6 +63,10 @@ public class FilmService {
                 .limit(count)
                 .collect(Collectors.toList());
         return sortedFilmList;
+    }
+
+    public List<Film> getFilmsByDirectorId(Integer directorId, SortingFilm sortBy) {
+        return filmStorage.getFilmsByDirectorId(directorId, sortBy);
     }
 
     public List<Film> getSearchingFilms(String query, String[] by) {
