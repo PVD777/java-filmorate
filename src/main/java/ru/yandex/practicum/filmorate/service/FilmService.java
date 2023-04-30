@@ -88,5 +88,4 @@ public class FilmService {
     public List<Film> getSearchingFilms(String query, String[] by) {
         return filmStorage.getSearchingFilms(query, by);
     }
-
 }
