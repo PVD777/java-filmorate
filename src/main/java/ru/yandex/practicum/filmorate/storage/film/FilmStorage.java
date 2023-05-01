@@ -1,19 +1,23 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.SortingFilm;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface FilmStorage {
 
-    public List<Film> getAllFilms();
+    List<Film> getAllFilms();
 
-    public Film addFilm(Film film);
+    Film addFilm(Film film);
 
-    public Film updateFilm(Film film);
+    Film updateFilm(Film film);
 
-    public Optional<Film> getFilm(int id);
+    Optional<Film> getFilm(int id);
 
-    public List<Film> getCommonFilms(int userId, int friendId);
+    List<Film> getSearchingFilms(String query, String[] by);
+
+    List<Film> getFilmsByDirectorId(Integer directorId, SortingFilm sortBy);
+    List<Film> getCommonFilms(int userId, int friendId);
 }
