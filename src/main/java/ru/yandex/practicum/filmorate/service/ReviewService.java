@@ -3,6 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ReviewNotFoundException;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.EventTypes;
+import ru.yandex.practicum.filmorate.model.OperationTypes;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.reviewsLikes.ReviewLikesStorage;
@@ -17,13 +20,32 @@ public class ReviewService {
 
     private final ReviewStorage reviewStorage;
     private final ReviewLikesStorage reviewLikesStorage;
+    private final UserService userService;
 
     public Review addReview(Review review) {
-        return reviewStorage.addReview(review);
+        Review addedReview = reviewStorage.addReview(review);
+        Event event = new Event(
+                addedReview.getUserId(),
+                EventTypes.REVIEW,
+                OperationTypes.ADD,
+                addedReview.getReviewId()
+        );
+        userService.addUserEvent(event);
+
+        return addedReview;
     }
 
     public void removeReview(int id) {
+        Review review = getReview(id);
+        int userId = review.getUserId();
         reviewStorage.removeReview(id);
+        Event event = new Event(
+                userId,
+                EventTypes.REVIEW,
+                OperationTypes.REMOVE,
+                id
+        );
+        userService.addUserEvent(event);
     }
 
     public Review getReview(int id) {
@@ -34,7 +56,16 @@ public class ReviewService {
     }
 
     public Review updateReview(Review review) {
-        return reviewStorage.updateReview(review).orElseThrow(() -> new ReviewNotFoundException("Запрошенный отзыв не найден"));
+        Review updatedReview = reviewStorage.updateReview(review).orElseThrow(() -> new ReviewNotFoundException("Запрошенный отзыв не найден"));
+        Event event = new Event(
+                updatedReview.getUserId(),
+                EventTypes.REVIEW,
+                OperationTypes.UPDATE,
+                updatedReview.getReviewId()
+        );
+        userService.addUserEvent(event);
+
+        return updatedReview;
     }
 
     public List<Review> getListOfReviews(Integer filmId, Integer count) {

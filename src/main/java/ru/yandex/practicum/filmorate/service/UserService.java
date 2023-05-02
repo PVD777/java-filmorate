@@ -1,12 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.friends.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.recommendate.RecommendateFilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -24,7 +23,8 @@ public class UserService {
     @Qualifier(value = "userDbStorage")
     private final UserStorage userStorage;
     private final FriendsStorage friendsStorage;
-    private  final RecommendateFilmStorage recommendateFilmStorage;
+    private final RecommendateFilmStorage recommendateFilmStorage;
+    private final EventStorage eventStorage;
 
     public List<User> getAllUsers() {
         return  userStorage.getAllUsers();
@@ -44,10 +44,14 @@ public class UserService {
 
     public void addFriend(int user1id, int user2id) {
         friendsStorage.addToFriend(user1id, user2id);
+        Event event = new Event(user1id, EventTypes.FRIEND, OperationTypes.ADD, user2id);
+        addUserEvent(event);
     }
 
     public void deleteFriend(int user1id, int user2id) {
         friendsStorage.removeFromFriend(user1id, user2id);
+        Event event = new Event(user1id, EventTypes.FRIEND, OperationTypes.REMOVE, user2id);
+        addUserEvent(event);
     }
 
     public List<User> getCommonFriends(int user1id, int user2id) {
@@ -77,4 +81,11 @@ public class UserService {
         return recommendateFilm;
     }
 
+    public List<Event> getEventByUserId(Integer id) {
+        return eventStorage.getByUserId(id);
+    }
+
+    public void addUserEvent(Event event) {
+        eventStorage.addEvent(event);
+    }
 }
