@@ -36,13 +36,14 @@ public class ReviewService {
     }
 
     public void removeReview(int id) {
-        reviewStorage.removeReview(id);
         Review review = getReview(id);
+        int userId = review.getUserId();
+        reviewStorage.removeReview(id);
         Event event = new Event(
-                review.getUserId(),
+                userId,
                 EventTypes.REVIEW,
                 OperationTypes.REMOVE,
-                review.getReviewId()
+                id
         );
         userService.addUserEvent(event);
     }

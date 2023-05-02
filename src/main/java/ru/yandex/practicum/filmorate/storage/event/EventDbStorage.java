@@ -2,10 +2,10 @@ package ru.yandex.practicum.filmorate.storage.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
@@ -23,13 +23,9 @@ public class EventDbStorage implements EventStorage {
 
     @Override
     public List<Event> getByUserId(Integer id) {
+        checkUser(id);
         String sql = "select * from event where user_id = ?";
-        try {
-            return jdbcTemplate.query(sql, eventRowMapper(), id);
-        } catch (DataAccessException e) {
-            log.warn("Пользователь с идентификатором {} отсутствует.", id);
-            throw new UserNotFoundException("Пользователь с id " + id + " не найден.");
-        }
+        return jdbcTemplate.query(sql, eventRowMapper(), id);
     }
 
     @Override
@@ -56,5 +52,14 @@ public class EventDbStorage implements EventStorage {
                 OperationTypes.valueOf(rs.getString("operation")),
                 rs.getInt("entity_id")
         );
+    }
+
+    private void checkUser(int id) {
+        String sql = "SELECT count(*) FROM USERS WHERE user_id = ?";
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql, id);
+        if (!row.next()) {
+            log.warn("Пользователь с идентификатором {} отсутствует.", id);
+            throw new UserNotFoundException("Пользователь с id " + id + " не найден.");
+        }
     }
 }
