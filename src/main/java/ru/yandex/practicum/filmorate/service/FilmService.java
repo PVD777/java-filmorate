@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.SortingFilm;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.recommendate.RecommendateFilmStorage;
@@ -45,15 +43,19 @@ public class FilmService {
 
     public Film putLikeToFilm(int id, int userId) {
         Film film = getFilm(id);
-        User user = userService.getUser(userId);
         likesStorage.setLikeToFilm(userId, id);
+        Event event = new Event(userId, EventTypes.LIKE, OperationTypes.ADD, id);
+        userService.addUserEvent(event);
+
         return film;
     }
 
     public Film deleteLikeFromFilm(int id, int userId) {
         Film film = getFilm(id);
-        User user = userService.getUser(userId);
         likesStorage.deleteLikeFromFilm(userId, id);
+        Event event = new Event(userId, EventTypes.LIKE, OperationTypes.REMOVE, id);
+        userService.addUserEvent(event);
+
         return film;
     }
 
