@@ -80,7 +80,7 @@ create table IF NOT EXISTS "REVIEWS_LIKES" (
     review_id int REFERENCES "REVIEWS"(review_id),
     is_positive boolean,
     PRIMARY KEY (user_id, review_id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS "EVENT"
 (
