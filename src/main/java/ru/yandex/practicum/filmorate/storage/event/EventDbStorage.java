@@ -49,7 +49,6 @@ public class EventDbStorage implements EventStorage {
     }
 
     private RowMapper<Event> eventRowMapper() {
-        Level EventType;
         return (rs, rowNum) -> new Event(
                 rs.getInt("id"),
                 rs.getLong("creation_date"),
