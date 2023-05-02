@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
-import ru.yandex.practicum.filmorate.storage.recommendate.RecommendateFilmStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,11 +17,8 @@ import java.util.stream.Collectors;
 public class FilmService {
     @Qualifier(value = "filmDbStorage")
     private final FilmStorage filmStorage;
-    private final RecommendateFilmStorage recommendateFilmStorage;
-
     private final UserService userService;
     private final GenreService genreService;
-    private final MpaService mpaService;
     private final LikesStorage likesStorage;
 
     public List<Film> getAllFilms() {
@@ -43,6 +39,7 @@ public class FilmService {
 
     public Film putLikeToFilm(int id, int userId) {
         Film film = getFilm(id);
+        userService.getUser(id);
         likesStorage.setLikeToFilm(userId, id);
         Event event = new Event(userId, EventTypes.LIKE, OperationTypes.ADD, id);
         userService.addUserEvent(event);
@@ -52,6 +49,7 @@ public class FilmService {
 
     public Film deleteLikeFromFilm(int id, int userId) {
         Film film = getFilm(id);
+        userService.getUser(id);
         likesStorage.deleteLikeFromFilm(userId, id);
         Event event = new Event(userId, EventTypes.LIKE, OperationTypes.REMOVE, id);
         userService.addUserEvent(event);
