@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
@@ -38,7 +37,7 @@ public class EventDbStorage implements EventStorage {
                         "user_id", event.getUserId(),
                         "event_type", event.getEventType(),
                         "operation", event.getOperation(),
-                        "entity_id", event.getEventId()))
+                        "entity_id", event.getEntityId()))
                 .intValue();
         log.info("Создано событие c id {} пользователя c id {}.", id, event.getUserId());
     }
@@ -56,8 +55,8 @@ public class EventDbStorage implements EventStorage {
 
     private void checkUser(int id) {
         String sql = "SELECT count(*) FROM USERS WHERE user_id = ?";
-        SqlRowSet row = jdbcTemplate.queryForRowSet(sql, id);
-        if (!row.next()) {
+        int count = jdbcTemplate.queryForObject(sql, new Object[] { id }, Integer.class);
+        if (count == 0) {
             log.warn("Пользователь с идентификатором {} отсутствует.", id);
             throw new UserNotFoundException("Пользователь с id " + id + " не найден.");
         }
