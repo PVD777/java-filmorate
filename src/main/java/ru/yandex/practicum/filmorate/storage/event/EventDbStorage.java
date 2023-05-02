@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.event;
 
-import ch.qos.logback.classic.Level;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
