@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,7 +13,6 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.*;
-
 
 @Slf4j
 @Component
