@@ -84,7 +84,6 @@ public class FilmDbStorage implements FilmStorage {
         film.setGenres(genreStorage.getFilmGenres(filmId));
         film.setDirectors(directorStorage.getByFilm(filmId));
         log.info("Добавлен новый фильм: id={}", filmId);
-
         return film;
     }
 
@@ -200,6 +199,13 @@ public class FilmDbStorage implements FilmStorage {
                     "ORDER BY R.RATE DESC";
             return jdbcTemplate.query(sql, filmRowMapper);
         }
+    }
+
+    @Override
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        String sql = "SELECT * FROM FILMS f, LIKES l, LIKES ll " +
+                "WHERE f.film_id = l.film_id AND f.film_id = ll.film_id AND l.user_id = ? AND ll.user_id = ?";
+        return jdbcTemplate.query(sql, filmRowMapper, userId, friendId);
     }
 
 
