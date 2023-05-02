@@ -39,7 +39,7 @@ public class FilmService {
 
     public Film putLikeToFilm(int id, int userId) {
         Film film = getFilm(id);
-        userService.getUser(id);
+        userService.getUser(userId);
         likesStorage.setLikeToFilm(userId, id);
         Event event = new Event(userId, EventTypes.LIKE, OperationTypes.ADD, id);
         userService.addUserEvent(event);
@@ -49,7 +49,7 @@ public class FilmService {
 
     public Film deleteLikeFromFilm(int id, int userId) {
         Film film = getFilm(id);
-        userService.getUser(id);
+        userService.getUser(userId);
         likesStorage.deleteLikeFromFilm(userId, id);
         Event event = new Event(userId, EventTypes.LIKE, OperationTypes.REMOVE, id);
         userService.addUserEvent(event);
