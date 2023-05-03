@@ -120,6 +120,18 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public Film deleteFilm(Film film) {
+        if (!isFilmExists(film.getId())) {
+            log.info("Удаление фильма с id " + film.getId());
+            throw new FilmNotFoundException("Указанный фильм не существует");
+        }
+        String sql = "DELETE FROM FILMS WHERE film_id = ?";
+        jdbcTemplate.update(sql, film.getId());
+        log.info("Фильм с id = " + film.getId() + " удален");
+        return film;
+    }
+
+    @Override
     public Optional<Film> getFilm(int id) {
         if (!isFilmExists(id)) {
             log.info("Фильм с идентификатором {} отсутствует.", id);

@@ -43,4 +43,9 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Добавлен новый пользователь {}", user.getName());
         return user;
     }
+
+    @Override
+    public void removeUser(int userId) {
+        //пока нет логики
+    }
 }

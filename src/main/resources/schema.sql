@@ -34,22 +34,22 @@ create table IF NOT EXISTS "GENRE"
 
 create table IF NOT EXISTS "FILM_GENRE"
 (
-    film_id int references "FILMS"(film_id),
-    genre_id int REFERENCES "GENRE"(genre_id),
+    film_id int references "FILMS"(film_id) ON DELETE CASCADE,
+    genre_id int REFERENCES "GENRE"(genre_id) ON DELETE CASCADE,
     primary key (film_id, genre_id)
 );
 
 create table IF NOT EXISTS "LIKES"
 (
-    user_id int ,
-    film_id int,
+    user_id int REFERENCES "USERS"(user_id) ON DELETE CASCADE,
+    film_id int REFERENCES "FILMS" (film_id) ON DELETE CASCADE,
     primary key (user_id, film_id)
 );
 
 create table IF NOT EXISTS "FRIENDS"
 (
-    user_id int REFERENCES "USERS"(user_id),
-    friend_id int REFERENCES "USERS"(user_id),
+    user_id int REFERENCES "USERS"(user_id) ON DELETE CASCADE,
+    friend_id int REFERENCES "USERS"(user_id) ON DELETE CASCADE,
     friend_status boolean default false,
     PRIMARY KEY (user_id, friend_id)
 );

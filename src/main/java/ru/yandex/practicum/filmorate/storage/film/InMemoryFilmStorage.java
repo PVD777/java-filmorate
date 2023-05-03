@@ -60,4 +60,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return null;
     }
 
+    @Override
+    public Film deleteFilm(Film film) {
+        //логики пока нет
+        return null;
+    }
+
 }

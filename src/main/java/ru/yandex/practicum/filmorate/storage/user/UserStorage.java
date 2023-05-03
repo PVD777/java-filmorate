@@ -16,4 +16,6 @@ public interface UserStorage {
 
     public User register(User user);
 
+    public void removeUser(int userId);
+
 }

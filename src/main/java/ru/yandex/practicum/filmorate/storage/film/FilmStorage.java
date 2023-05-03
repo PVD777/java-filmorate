@@ -14,6 +14,8 @@ public interface FilmStorage {
 
     Film updateFilm(Film film);
 
+    Film deleteFilm(Film film);
+
     Optional<Film> getFilm(int id);
 
     List<Film> getSearchingFilms(String query, String[] by);
