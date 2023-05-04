@@ -42,7 +42,7 @@ public class FilmController {
     }
 
     @DeleteMapping("/{filmId}")
-    public Film deleteLikeFromFilm(@PathVariable int filmId) {
+    public Film deleteFilm(@PathVariable int filmId) {
         return filmService.deleteFilm(filmId);
     }
 

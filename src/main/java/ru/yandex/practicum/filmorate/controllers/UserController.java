@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -39,12 +40,14 @@ public class UserController {
     }
 
     @DeleteMapping("{id}/friends/{friendId}")
-    public void deleteFrind(@PathVariable int id, @PathVariable int friendId) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
         userService.deleteFriend(id, friendId);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteFrind(@PathVariable int userId) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable int userId) {
         userService.deleteUser(userId);
     }
 

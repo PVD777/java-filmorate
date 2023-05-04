@@ -10,9 +10,4 @@ public interface MpaStorage {
     List<Mpa> getAllMpa();
 
     Optional<Mpa> getMpa(int id);
-
-    Mpa updateMpa(Mpa mpa);
-
-    Mpa addMpa(Mpa mpa);
-
 }

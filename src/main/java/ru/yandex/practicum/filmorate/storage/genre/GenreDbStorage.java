@@ -21,13 +21,10 @@ public class GenreDbStorage implements GenreStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Genre> genreRowMapper = (resultSet, rowNum) -> {
-        Genre genre = new Genre(
-                resultSet.getInt("genre_id"),
-                resultSet.getString("name")
-        );
-        return genre;
-    };
+    private final RowMapper<Genre> genreRowMapper = (resultSet, rowNum) -> new Genre(
+            resultSet.getInt("genre_id"),
+            resultSet.getString("name")
+    );
 
 
     @Override
@@ -42,8 +39,7 @@ public class GenreDbStorage implements GenreStorage {
         if (count < 1) {
             throw new GenreNotFoundException("Жанр с id " + id + " не найден");
         }
-            Genre genre = jdbcTemplate.queryForObject("SELECT * FROM GENRE WHERE genre_id = ?", genreRowMapper, id);
-            return genre;
+        return jdbcTemplate.queryForObject("SELECT * FROM GENRE WHERE genre_id = ?", genreRowMapper, id);
     }
 
     @Override

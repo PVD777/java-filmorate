@@ -8,14 +8,14 @@ import java.util.Optional;
 
 public interface UserStorage {
 
-    public List<User> getAllUsers();
+    List<User> getAllUsers();
 
-    public Optional<User> getUser(int id);
+    Optional<User> getUser(int id);
 
-    public User updateUser(User user);
+    User updateUser(User user);
 
-    public User register(User user);
+    User register(User user);
 
-    public void removeUser(int userId);
+    void removeUser(int userId);
 
 }
