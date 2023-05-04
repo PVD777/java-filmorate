@@ -18,13 +18,10 @@ public class MpaDBStorage implements MpaStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Mpa> mpaRowMapper = (resultSet, rowNum) -> {
-        Mpa mpa = new Mpa(
-                resultSet.getInt("mpa_id"),
-                resultSet.getString("mpaName")
-        );
-        return mpa;
-    };
+    private final RowMapper<Mpa> mpaRowMapper = (resultSet, rowNum) -> new Mpa(
+            resultSet.getInt("mpa_id"),
+            resultSet.getString("mpaName")
+    );
 
     @Override
     public List<Mpa> getAllMpa() {
@@ -38,17 +35,7 @@ public class MpaDBStorage implements MpaStorage {
         if (count < 1) {
             throw new MpaNotFoundException("MPA с id " + id + " не найден");
         }
-        Mpa mpa = jdbcTemplate.queryForObject("SELECT * FROM MPA_RATING WHERE mpa_id = ?", mpaRowMapper, id);
-        return Optional.of(mpa);
+        return Optional.of(jdbcTemplate.queryForObject("SELECT * FROM MPA_RATING WHERE mpa_id = ?", mpaRowMapper, id));
     }
 
-    @Override
-    public Mpa updateMpa(Mpa mpa) {
-        return null;
-    }
-
-    @Override
-    public Mpa addMpa(Mpa mpa) {
-        return null;
-    }
 }

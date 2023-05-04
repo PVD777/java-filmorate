@@ -21,13 +21,10 @@ public class GenreDbStorage implements GenreStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Genre> genreRowMapper = (resultSet, rowNum) -> {
-        Genre genre = new Genre(
-                resultSet.getInt("genre_id"),
-                resultSet.getString("name")
-        );
-        return genre;
-    };
+    private final RowMapper<Genre> genreRowMapper = (resultSet, rowNum) -> new Genre(
+            resultSet.getInt("genre_id"),
+            resultSet.getString("name")
+    );
 
 
     @Override
@@ -37,23 +34,16 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Genre getGenre(int id) {
-        String sql = "SELECT count(*) FROM GENRE WHERE genre_id = ?";
-        int count = jdbcTemplate.queryForObject(sql, new Object[] { id }, Integer.class);
-        if (count < 1) {
+        String sql = "SELECT * FROM GENRE WHERE genre_id = ?";
+        List<Genre> genres = jdbcTemplate.query(sql, genreRowMapper, id);
+        if (genres.isEmpty()) {
             throw new GenreNotFoundException("Жанр с id " + id + " не найден");
         }
-            Genre genre = jdbcTemplate.queryForObject("SELECT * FROM GENRE WHERE genre_id = ?", genreRowMapper, id);
-            return genre;
+        return genres.get(0);
     }
 
     @Override
     public Set<Genre> getFilmGenres(int id) {
-
-       /* String sql = "SELECT genre.genre_id, name FROM FILM_GENRE" +
-                "" +
-                "JOIN genre ON film_genre.genre_id = genre.genre_id\n" +
-                "WHERE film_id = ?\n" +
-                "ORDER BY genre.genre_id";*/
         String sql = "SELECT genre_id FROM FILM_GENRE WHERE film_id = ?";
         Set<Genre> genres = new HashSet<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);

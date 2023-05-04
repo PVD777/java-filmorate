@@ -2,7 +2,10 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -37,8 +40,15 @@ public class UserController {
     }
 
     @DeleteMapping("{id}/friends/{friendId}")
-    public void deleteFrind(@PathVariable int id, @PathVariable int friendId) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
         userService.deleteFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable int userId) {
+        userService.deleteUser(userId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
@@ -56,5 +66,14 @@ public class UserController {
         return userService.getFriendsOfId(id);
     }
 
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendateFilm(@PathVariable int id) {
+        return userService.getRecommendateFilm(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Event> getUsersFeed(@PathVariable Integer id) {
+        return userService.getEventByUserId(id);
+    }
 }
 
