@@ -183,8 +183,8 @@ public class FilmDbStorage implements FilmStorage {
             String sql = "SELECT * FROM FILMS AS F " +
                     "LEFT JOIN (SELECT film_id, COUNT(user_id) AS RATE FROM LIKES GROUP BY film_id) AS R " +
                     "ON F.film_id = R.film_id " +
-                    "LEFT JOIN FILM_DIRECTOR AS FD ON F.film_id = FD.film_id " +
-                    "LEFT JOIN DIRECTOR AS D ON FD.director_id = D.director_id " +
+                    "INNER JOIN FILM_DIRECTOR AS FD ON F.film_id = FD.film_id " +
+                    "INNER JOIN DIRECTOR AS D ON FD.director_id = D.director_id " +
                     "WHERE D.name ILIKE ? ORDER BY R.RATE DESC";
             return jdbcTemplate.query(sql, filmRowMapper, query);
         } else if (keyTags.contains("title")) {
