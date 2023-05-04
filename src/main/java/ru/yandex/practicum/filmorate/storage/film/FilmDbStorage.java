@@ -78,11 +78,7 @@ public class FilmDbStorage implements FilmStorage {
             jdbcTemplate.batchUpdate(ADD_FILM_DIRECTOR, initFilmDirectorValues(filmId, directors));
         }
 
-        film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
-        film.setLikesCounter(likesStorage.getCountOfLike(filmId));
-        film.setIdOfLikers(likesStorage.getIdOfLikers(filmId));
-        film.setGenres(genreStorage.getFilmGenres(filmId));
-        film.setDirectors(directorStorage.getByFilm(filmId));
+        film = setFilmParametres(film);
         log.info("Добавлен новый фильм: id={}", filmId);
         return film;
     }
@@ -109,11 +105,7 @@ public class FilmDbStorage implements FilmStorage {
             jdbcTemplate.batchUpdate(ADD_FILM_DIRECTOR, initFilmDirectorValues(filmId, directors));
         }
 
-        film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
-        film.setLikesCounter(likesStorage.getCountOfLike(filmId));
-        film.setIdOfLikers(likesStorage.getIdOfLikers(filmId));
-        film.setGenres(genreStorage.getFilmGenres(filmId));
-        film.setDirectors(directorStorage.getByFilm(filmId));
+        film = setFilmParametres(film);
         log.info("Фильм с идентификатором {} обновлен.", filmId);
 
         return film;
@@ -141,10 +133,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "SELECT * FROM FILMS WHERE FILM_ID = ?";
         Film film = jdbcTemplate.queryForObject(sql, filmRowMapper, id);
 
-        film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
-        film.setLikesCounter(likesStorage.getCountOfLike(id));
-        film.setIdOfLikers(likesStorage.getIdOfLikers(id));
-        film.setDirectors(directorStorage.getByFilm(id));
+        film = setFilmParametres(film);
         log.info("Найден фильм: {} {}", id, film.getName());
 
         return Optional.of(film);
@@ -253,5 +242,14 @@ public class FilmDbStorage implements FilmStorage {
                 return directors.size();
             }
         };
+    }
+
+    private Film setFilmParametres(Film film) {
+        film.setMpa(mpaStorage.getMpa(film.getMpa().getId()).get());
+        film.setLikesCounter(likesStorage.getCountOfLike(film.getId()));
+        film.setIdOfLikers(likesStorage.getIdOfLikers(film.getId()));
+        film.setGenres(genreStorage.getFilmGenres(film.getId()));
+        film.setDirectors(directorStorage.getByFilm(film.getId()));
+        return film;
     }
 }

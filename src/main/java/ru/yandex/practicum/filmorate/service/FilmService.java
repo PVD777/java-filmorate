@@ -41,6 +41,8 @@ public class FilmService {
         Film film = getFilm(id);
         userService.getUser(userId);
         likesStorage.setLikeToFilm(userId, id);
+        film.getIdOfLikers().add(userId);
+        film.setLikesCounter(film.getLikesCounter() + 1);
         Event event = new Event(userId, EventTypes.LIKE, OperationTypes.ADD, id);
         userService.addUserEvent(event);
 
@@ -51,6 +53,8 @@ public class FilmService {
         Film film = getFilm(id);
         userService.getUser(userId);
         likesStorage.deleteLikeFromFilm(userId, id);
+        film.getIdOfLikers().remove(userId);
+        film.setLikesCounter(film.getLikesCounter() - 1);
         Event event = new Event(userId, EventTypes.LIKE, OperationTypes.REMOVE, id);
         userService.addUserEvent(event);
 
